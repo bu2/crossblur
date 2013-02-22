@@ -5,7 +5,7 @@
     <title>Cross-browser gaussian blur demo</title>
     <meta name="description" content="Cross-browser gaussian blur demo" />
     <meta name="author" content="Bruno Le Hyaric (Bu2)" />
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 
     <style>
       
@@ -19,11 +19,17 @@
 
         overflow: hidden;
       }
-      
+
       img.guilin {
         filter: blur(5px);
+      }
+      
+      img.guilin.chrome {
         -webkit-filter: blur(5px);
-        -moz-filter: blur(5px);
+      }
+
+      img.guilin.mozilla {
+        filter: url(#blur);
       }
 
     </style>
@@ -51,7 +57,13 @@
       };
 
       var initChrome = function() {
-        $('#here').replaceWith('<img class="guilin" src="guilin.jpg" />')
+        $('#here').replaceWith('<img class="guilin" src="guilin.jpg" />');
+        $('img.guilin').addClass('chrome');
+      };
+
+      var initMozilla = function() {
+        $('#here').replaceWith('<img class="guilin" src="guilin.jpg" /><svg id="svg"><filter id="blur"><feGaussianBlur stdDeviation="5" /></filter></svg>');
+        $('img.guilin').addClass('mozilla');
       };
       
       var init = function() {
@@ -60,7 +72,10 @@
         screen_height = $(document.body).height();
         screen_ratio = screen_width / screen_height;
 
-        initChrome();
+        if ($.browser.chrome)
+          initChrome();
+        else if ($.browser.mozilla)
+          initMozilla();
       
         my_resize($('img.guilin'));
         $(window).resize( function(event) { document.location.reload(); } );
