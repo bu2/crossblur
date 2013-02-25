@@ -13,7 +13,7 @@
         margin: 0;
         padding: 0;
         border: 0;
-
+ 
         width: 100%;
         height: 100%;
 
@@ -21,20 +21,49 @@
       }
 
       img.guilin {
+        z-index: -1;
+      }
+
+      img.guiling.blurred {
         filter: blur(5px);
       }
       
-      img.guilin.chrome {
+      img.guilin.blurred.chrome {
         -webkit-filter: blur(5px);
       }
 
-      img.guilin.mozilla {
+      img.guilin.blurred.mozilla {
         filter: url(#blur);
+      }
+
+      div.text {
+        position: absolute;
+        top: 80%;
+        left: 70%;
+        z-index: 0;
+
+        background: #5a5a5a;
+        color: #fafafa;
+        opacity: 0.8;
+        font: normal 48px serif;
+        margin: 30px;
+        padding: 30px 50px 30px 50px;
+        border-radius: 15px;
+        box-shadow: 15px 15px 30px rgba(0,0,0,0.7);
+      }
+
+      div.text.blurred {
+        color: transparent;
+        text-shadow: 0 0 20px #fafafa;
       }
 
     </style>
     
     <script language="javascript" >
+
+      var IMG = '<img class="guilin" src="guilin.jpg" />';
+      var SVG_FILTER = '<svg id="svg"><filter id="blur"><feGaussianBlur stdDeviation="5" /></filter></svg>';
+      var TEXT = '<div class="text blurred">&ldquo; 桂林山水<br/>Guilin landscape &rdquo;</div>';
 
       var screen_width = -1;
       var screen_height = -1;
@@ -57,12 +86,12 @@
       };
 
       var initChrome = function() {
-        $('#here').replaceWith('<img class="guilin" src="guilin.jpg" />');
+        $('#here').replaceWith(IMG + TEXT);
         $('img.guilin').addClass('chrome');
       };
 
       var initMozilla = function() {
-        $('#here').replaceWith('<img class="guilin" src="guilin.jpg" /><svg id="svg"><filter id="blur"><feGaussianBlur stdDeviation="5" /></filter></svg>');
+        $('#here').replaceWith(IMG + SVG_FILTER + TEXT);
         $('img.guilin').addClass('mozilla');
       };
       
@@ -76,6 +105,9 @@
           initChrome();
         else if ($.browser.mozilla)
           initMozilla();
+
+        $('div.text').on('mouseenter', function() { $('img.guilin').addClass('blurred'); $('div.text').removeClass('blurred'); });
+        $('div.text').on('mouseleave', function() { $('img.guilin').removeClass('blurred'); $('div.text').addClass('blurred'); });
       
         my_resize($('img.guilin'));
         $(window).resize( function(event) { document.location.reload(); } );
